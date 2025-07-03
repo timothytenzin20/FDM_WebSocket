@@ -1,3 +1,25 @@
+# Root environment and Python virtual environment
 .env
 /node_modules
 /venv
+
+# React app dependencies
+/printer-dashboard/node_modules
+/printer-dashboard/.pnp
+/printer-dashboard/.pnp.js
+
+# React app testing
+/printer-dashboard/coverage
+
+# React app production build
+/printer-dashboard/build
+
+# Misc files
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
