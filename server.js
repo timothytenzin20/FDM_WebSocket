@@ -10,8 +10,8 @@ const server = http.createServer(app); // Create the HTTP server for Express
 
 const wss = new WebSocket.Server({ server }); // Attach WebSocket server to the same HTTP server
 const connectionKey = process.env.CONNECTION_KEY;
-
-
+const clients = new Map();
+var clientCounter = 1;
 
 // Express routes
 app.get('/', (req, res) => {
@@ -20,6 +20,8 @@ app.get('/', (req, res) => {
 
 // WebSocket connection handling
 wss.on('connection', (ws, req) => {
+    ws.id = clientCounter++;
+    clients.set(ws.id, ws);
     const parameters = url.parse(req.url, true).query;
     const token = parameters.token;
 
@@ -27,32 +29,41 @@ wss.on('connection', (ws, req) => {
     
     if (protocol !== 'secure-guelph-user') {
         console.log('Invalid subprotocol, closing connection');
-        ws.close(1008, 'Invalid subprotocol');
+        ws.close(1008, 'Invalid subprotocol');  // 1008 = invalid access
         return;
     }
 
     // token is arbitrary value
     if (token !== connectionKey.toString()) {
         console.log('Invalid token. Closing connection');
-        ws.close(1008, 'Invalid token');
+        ws.close(1008, 'Invalid token'); // 1008 = invalid access
         return;
     }
 
     console.log(`Client connected with subprotocol: ${protocol}`);
     
     ws.on('message', message => {
-        console.log(`Received: ${message}`);
-        ws.send(`Echo: ${message}`);
+        console.log(`Client ${ws.id} sent: ${message}`);
+        wss.broadcast(`Client ${ws.id}: ${message}`);
     });
     ws.on('close', () => {
-        console.log('Client disconnected');
-    });
+        clients.delete(ws.id);
+        console.log(`Client ${ws.id} disconnected`);    });
 });
 
 server.listen(PORT, function (err) {
     if (err) console.log(err);
     console.log("Server listening on PORT", PORT);
 });
+
+wss.broadcast = function broadcast(data) {
+    console.log(`Broadcasting: ${data}`);
+    wss.clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(data);
+        }
+    });
+};
 
 // graceful shutdown
 function shutdown(){
@@ -73,3 +84,4 @@ function shutdown(){
 }
 
 process.on('SIGINT', shutdown);   // Ctrl+C
+
