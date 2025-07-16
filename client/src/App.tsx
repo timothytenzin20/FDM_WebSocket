@@ -1,12 +1,11 @@
 import React from "react";
-import Dashboard from "./Components/Dashboard";
 import MUIDashboard from "./Components/MUIDashboard";
-
+import Header from "./Components/Header";
 
 function App() {
   return (
     <div>
-      {/* <Dashboard/> */}
+      <Header/>
       <MUIDashboard/>
     </div>
   )

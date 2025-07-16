@@ -44,7 +44,9 @@ wss.on('connection', (ws, req) => {
     
     ws.on('message', message => {
         console.log(`Client ${ws.id} sent: ${message}`);
-        wss.broadcast(`Client ${ws.id}: ${message}`);
+        const data = JSON.stringify(); // receive from rasp pi
+        wss.broadcast(data);
+        // wss.broadcast(`Client ${ws.id}: ${message}`);
     });
     ws.on('close', () => {
         clients.delete(ws.id);

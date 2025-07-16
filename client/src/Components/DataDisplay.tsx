@@ -1,5 +1,5 @@
 import React from "react";
-import "./Dashboard.css";
+import "./DataDisplay.css";
 
 interface PrinterStatus {
   nozzleTemp: number;
@@ -8,7 +8,7 @@ interface PrinterStatus {
   lineWidth: number; // mm
 }
 
-const Dashboard: React.FC = () => {
+const DataDisplay: React.FC = () => {
   // Later: fetch this data from WebSocket
   const printerData: PrinterStatus = {
     nozzleTemp: 215,
@@ -37,10 +37,6 @@ const Dashboard: React.FC = () => {
   return (
     <div className="dashboard">
       <div className="main">
-        <header className="topbar">
-          <h1 className="topbar-title">Printer Status Overview</h1>
-        </header>
-
         <div className="dashboard-content">
           <div className="card-grid">
             <div className={getTempColor(printerData.nozzleTemp, "nozzle")}>
@@ -69,4 +65,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard;
+export default DataDisplay;
