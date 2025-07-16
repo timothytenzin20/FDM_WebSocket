@@ -14,9 +14,9 @@ const clients = new Map();
 var clientCounter = 1;
 
 // Express routes
-app.get('/', (req, res) => {
-  res.send('Hello from Express!');
-});
+// app.get('/', (req, res) => {
+//   res.send('Hello from Express!');
+// });
 
 // WebSocket connection handling
 wss.on('connection', (ws, req) => {
@@ -27,7 +27,7 @@ wss.on('connection', (ws, req) => {
 
     const protocol = ws.protocol; // inputted protocol
     
-    if (protocol !== 'secure-guelph-user') {
+    if (protocol !== 'secure-guelph-user' && protocol !== 'testing') {
         console.log('Invalid subprotocol, closing connection');
         ws.close(1008, 'Invalid subprotocol');  // 1008 = invalid access
         return;
@@ -40,7 +40,7 @@ wss.on('connection', (ws, req) => {
         return;
     }
 
-    console.log(`Client connected with subprotocol: ${protocol}`);
+    console.log(`Client ${ws.id} connected with subprotocol: ${protocol}`);
     
     ws.on('message', message => {
         console.log(`Client ${ws.id} sent: ${message}`);
