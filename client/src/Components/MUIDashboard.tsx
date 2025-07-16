@@ -7,6 +7,7 @@ import {
   TextField,
   Typography,
   CssBaseline,
+  Paper,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 
@@ -110,10 +111,15 @@ function MUIDashboard() {
     <div>
       <Box sx={{ padding: 2, maxWidth: 6000, margin: "0 auto" }}>
         <h2 className="topbar-title">Printer Status Overview</h2>
-        <Dashboard/>
         <CssBaseline /> {/* Ensures consistent baseline styling */}
         <Typography variant="h4" gutterBottom align="center"/>
-        
+        {/*  */}
+        {messages.map((msg, index) => (
+          <React.Fragment key={index}>
+            <Dashboard bedTemp={msg} />
+          </React.Fragment>
+        ))}
+        {/*  */}
         <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
           <TextField
             fullWidth

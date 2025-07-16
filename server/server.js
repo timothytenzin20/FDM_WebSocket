@@ -44,7 +44,7 @@ wss.on('connection', (ws, req) => {
     
     ws.on('message', message => {
         console.log(`Client ${ws.id} sent: ${message}`);
-        const data = JSON.stringify(); // receive from rasp pi
+        const data = JSON.stringify({ bedTemp: Math.random() * 100 }); //receive from rasp pi
         wss.broadcast(data);
         // wss.broadcast(`Client ${ws.id}: ${message}`);
     });
