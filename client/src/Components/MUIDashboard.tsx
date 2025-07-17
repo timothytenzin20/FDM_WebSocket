@@ -114,11 +114,7 @@ function MUIDashboard() {
         <CssBaseline /> {/* Ensures consistent baseline styling */}
         <Typography variant="h4" gutterBottom align="center"/>
         {/*  */}
-        {messages.map((msg, index) => (
-          <React.Fragment key={index}>
-            <Dashboard bedTemp={msg} />
-          </React.Fragment>
-        ))}
+        {messages.length > 0 && <Dashboard data={messages[messages.length - 1]} />}
         {/*  */}
         <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
           <TextField
