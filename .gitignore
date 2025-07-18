@@ -27,6 +27,9 @@ Thumbs.db
 server/.env
 server/venv/
 
+# Server data
+server/data.json
+
 # React app dependencies
 client/node_modules/
 client/.pnp

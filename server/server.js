@@ -13,9 +13,48 @@ const connectionKey = process.env.CONNECTION_KEY;
 const clients = new Map();
 var clientCounter = 1;
 
+const fs = require('fs');
+const path = require('path');
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, 'client/build')));
+
+const dataFilePath = path.join(__dirname, 'data.json');
+
+// Ensure data.json exists at startup, else create file
+if (!fs.existsSync(dataFilePath)) {
+    fs.writeFileSync(dataFilePath, JSON.stringify({}), 'utf8');
+}
+
+// Function to update the JSON file
+function updateData(newData) {
+    const currentData = JSON.parse(fs.readFileSync(dataFilePath, 'utf8'));
+    const updatedData = { ...currentData, ...newData };
+
+    fs.writeFileSync(dataFilePath, JSON.stringify(updatedData, null, 2), 'utf8');
+    return updatedData;
+}
+
 // Express routes
-// app.get('/', (req, res) => {
+// Catch-all to serve React for any unknown routes (for React Router)
+// app.get('*', (req, res) => {
+//   res.sendFile(path.resolve(__dirname, 'client/build', 'index.html'));
+// });
+
+// app.get('/testing', (req, res) => {
 //   res.send('Hello from Express!');
+// });
+
+// app.get('/api/data', (req, res) => {
+//   const dataPath = path.join(__dirname, 'data.json');
+//   fs.readFile(dataPath, 'utf8', (err, data) => {
+//     if (err) return res.status(500).send('Error reading data');
+//     res.json(JSON.parse(data));
+//   });
+// });
+
+// app.get('/api/test', (req, res) => {
+//   res.json({ test: 'it works' });
 // });
 
 // WebSocket connection handling
@@ -44,13 +83,24 @@ wss.on('connection', (ws, req) => {
     
     ws.on('message', message => {
         console.log(`Client ${ws.id} sent: ${message}`);
-        const data = JSON.stringify({ bedTemp: Math.random() * 100 }); //receive from rasp pi
-        wss.broadcast(data);
-        // wss.broadcast(`Client ${ws.id}: ${message}`);
+        
+        // Mock update values
+        const newSensorData = {
+            bedTemp: Math.random() * 100,
+            nozzleTemp: Math.random() * 100,
+            printSpeed: Math.random() * 100,
+            lineWidth: Math.random() * 100,
+            nozzleDiameter: Math.random() * 100
+        };
+
+        const updatedData = updateData(newSensorData); // update JSON file
+        wss.broadcast(JSON.stringify(updatedData));     // broadcast to all clients
     });
+
     ws.on('close', () => {
         clients.delete(ws.id);
-        console.log(`Client ${ws.id} disconnected`);    });
+        console.log(`Client ${ws.id} disconnected`);    
+    });
 });
 
 server.listen(PORT, function (err) {
