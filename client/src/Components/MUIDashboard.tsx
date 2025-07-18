@@ -110,7 +110,6 @@ function MUIDashboard() {
   return (
     <div>
       <Box sx={{ padding: 2, maxWidth: 6000, margin: "0 auto" }}>
-        <h2 className="topbar-title">Printer Status Overview</h2>
         <CssBaseline /> {/* Ensures consistent baseline styling */}
         <Typography variant="h4" gutterBottom align="center"/>
         {/*  */}
