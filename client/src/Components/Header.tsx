@@ -30,7 +30,7 @@ return (
               textDecoration: 'none',
             }}
           >
-            FDM Dashboard
+            Digital Twin Dashboard
           </Typography>
         </Toolbar>
       </Container>
