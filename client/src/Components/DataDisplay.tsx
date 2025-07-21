@@ -25,6 +25,7 @@ const DataDisplay: React.FC<DataDisplayProps> = ({ data }) => {
   const [bedTemp, setBedTemp] = useState<number | null>(null);
   const [nozzleTemp, setNozzleTemp] = useState<number | null>(null);
   const [printSpeed, setPrintSpeed] = useState<number | null>(null);
+  const [predictedLineWidth, setPredictedLineWidth] = useState<number | null>(null);
   const [lineWidth, setLineWidth] = useState<number | null>(null);
   const [nozzleDiameter, setNozzleDiameter] = useState<number | null>(null);
 
@@ -46,6 +47,8 @@ const DataDisplay: React.FC<DataDisplayProps> = ({ data }) => {
       setNozzleTemp(value);
     } else if (category === "printSpeed") {
       setPrintSpeed(value);
+    } else if (category === "predictedLineWidth") {
+      setPredictedLineWidth(value);
     } else if (category === "lineWidth") {
       setLineWidth(value);
     } else if (category === "nozzleDiameter") {
@@ -65,8 +68,8 @@ const DataDisplay: React.FC<DataDisplayProps> = ({ data }) => {
   };
 
   const getLineWidthColor = (width: number) => {
-    if (width < 0.35) return "#f97316";
-    if (width > 0.45) return "#ef4444	";
+    if (width < (predictedLineWidth !== null ? predictedLineWidth : 0.35)) return "#f97316";
+    if (width > (predictedLineWidth !== null ? predictedLineWidth : 0.45)) return "#ef4444	";
     return "#10b981";
   };
 
@@ -76,15 +79,15 @@ const DataDisplay: React.FC<DataDisplayProps> = ({ data }) => {
     return "#10b981";
   };
 
-    const lineScale = 10; // px per mm for line width
+  const lineScale = 10; // px per mm for line width
   const nozzleScale = 20; // px per mm for nozzle diameter
 
   const lineWidthPx = Math.max(
   (lineWidth != null ? lineWidth * lineScale : 10) // if lineWidth exists, scale it, else 0 (SET TO 10 FOR NOW)
-);
-const nozzleDiameterPx = Math.max(
-  (nozzleDiameter != null ? nozzleDiameter * nozzleScale : 10) // if lineWidth exists, scale it, else 0 (SET TO 10 FOR NOW)
-);
+  );
+  const nozzleDiameterPx = Math.max(
+    (nozzleDiameter != null ? nozzleDiameter * nozzleScale : 10) // if lineWidth exists, scale it, else 0 (SET TO 10 FOR NOW)
+  );
 
   return (
     <div className="dashboard">
@@ -95,8 +98,9 @@ const nozzleDiameterPx = Math.max(
               <div>
                 <h2 className="topbar-title">Printer Status Overview</h2>
                 <div className="flex">
-                  <div className={`flex-container ${bedTemp !== null ? getTempColor(bedTemp, "bed") : "card"}`}>
+                  <div className={`tooltip flex-container ${bedTemp !== null ? getTempColor(bedTemp, "bed") : "card"}`}>
                     <p>Bed Temperature:</p>
+                    <span className="tooltiptext"> Red Gauge: Greater than 75°C <br/> Green Gauge: Less than 75°C</span>
                     <Gauge 
                       height={150} 
                       value={bedTemp ?? 0} 
@@ -109,8 +113,9 @@ const nozzleDiameterPx = Math.max(
                     {data.timestamp}
                     </Typography>
                   </div>
-                  <div className={`flex-container ${nozzleTemp !== null ? getTempColor(nozzleTemp, "nozzle") : "card"}`}>
+                  <div className={`tooltip flex-container ${nozzleTemp !== null ? getTempColor(nozzleTemp, "nozzle") : "card"}`}>
                     <p>Nozzle Temperature:</p>
+                    <span className="tooltiptext"> Red Gauge: Greater than 265°C <br/> Green Gauge: Less than 265°C</span>
                     <Gauge 
                       height={150} 
                       value={nozzleTemp ?? 0} 
@@ -123,8 +128,9 @@ const nozzleDiameterPx = Math.max(
                     {data.timestamp}
                     </Typography>
                   </div>
-                  <div className={`flex-container ${printSpeed !== null ? getSpeedColor(printSpeed) : "card"}`}>
+                  <div className={`tooltip flex-container ${printSpeed !== null ? getSpeedColor(printSpeed) : "card"}`}>
                     <p>Print Speed:</p>
+                    <span className="tooltiptext"> Red Gauge: Greater than 100 mm/s <br/> Green Gauge: Less than 100 mm/s</span>
                     <Gauge 
                       height={150} 
                       value={nozzleTemp ?? 0} 
@@ -141,6 +147,17 @@ const nozzleDiameterPx = Math.max(
                 <h2 className="topbar-title">Image Processing Results</h2>
                 <div className="flex flex-container">
                       <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+                        <div>
+                          <p>Predicted Line Width: {predictedLineWidth} mm</p>
+                          <div
+                            style={{
+                              width: '100px',
+                              height: `${predictedLineWidth !== null ? predictedLineWidth * lineScale : lineWidthPx}px`,
+                              backgroundColor: `#10b981`,
+                              borderRadius: '4px',
+                            }}
+                          />
+                        </div>
                         <div>
                           <p>Line Width: {lineWidth} mm</p>
                           <div
@@ -165,34 +182,6 @@ const nozzleDiameterPx = Math.max(
                           />
                         </div>
                       </div>
-                  {/* <div className={`flex-container ${lineWidth !== null ? getLineWidthColor(lineWidth) : "card"}`}>
-                    <p>Line Width:</p>
-                    <Gauge 
-                      height={150} 
-                      value={lineWidth ?? 0} 
-                      valueMin={0} 
-                      // valueMax={300} 
-                      startAngle={-110} 
-                      endAngle={110}  
-                      text={`${lineWidth?.toFixed(2) ?? "--"}mm`}/>                
-                    <Typography variant="caption" color="text.secondary">
-                    {data.timestamp}
-                    </Typography>
-                  </div>
-                  <div className={`flex-container ${nozzleDiameter !== null ? getNozzleDiameterColor(nozzleDiameter) : "card"}`}>
-                    <p>Nozzle Diameter:</p>
-                    <Gauge 
-                      height={150} 
-                      value={nozzleDiameter ?? 0} 
-                      valueMin={0} 
-                      valueMax={300} 
-                      startAngle={-110} 
-                      endAngle={110}  
-                      text={`${nozzleDiameter?.toFixed(2) ?? "--"}mm`}/>                
-                    <Typography variant="caption" color="text.secondary">
-                    {data.timestamp}
-                    </Typography>
-                  </div> */}
                 </div>
             </div>
             ) : (
