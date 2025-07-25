@@ -17,7 +17,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, 'client/build')));
+app.use(express.static(path.join(__dirname, '../client/build')));
 
 const dataFilePath = path.join(__dirname, 'data.json');
 
@@ -37,10 +37,18 @@ function updateData(newData) {
 
 // Express routes
 // Catch-all to serve React for any unknown routes (for React Router)
-// app.get('*', (req, res) => {
-//   res.sendFile(path.resolve(__dirname, 'client/build', 'index.html'));
-// });
+const indexPath = path.join(__dirname, '../client/build/index.html');
+console.log(indexPath);
 
+if (fs.existsSync(indexPath)) {
+  app.use((req, res) => {
+    res.sendFile(indexPath);
+  });
+} else {
+  console.error("Error: index.html not found at", indexPath);
+}
+
+// API routes (you might want these)
 // app.get('/testing', (req, res) => {
 //   res.send('Hello from Express!');
 // });
@@ -136,4 +144,3 @@ function shutdown(){
 }
 
 process.on('SIGINT', shutdown);   // Ctrl+C
-
