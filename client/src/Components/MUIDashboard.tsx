@@ -123,7 +123,7 @@ function MUIDashboard() {
       <Box sx={{ padding: 2, maxWidth: 6000, margin: "0 auto" }}>
         <CssBaseline />
         <Typography variant="h4" gutterBottom align="center"/>
-        <Dashboard messages={messages} />
+        <Dashboard data={messages} />
         
         {/* Uncomment to simulate data being received */}
         <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
@@ -146,7 +146,22 @@ function MUIDashboard() {
             Send
           </Button>
         </Box>
-        <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-start", alignItems: "center", padding: 1 }}>
+        
+        {/* Display Additional Information */}
+        {messages.length > 0 && (
+          <Box sx={{ mt: 2, p: 2, bgcolor: 'grey.100', borderRadius: 1, maxHeight: 200, overflow: 'auto' }}>
+            <Typography variant="subtitle2" gutterBottom>
+              Recent Data (Last 20):
+            </Typography>
+            {messages.slice(-20).map((msg, index) => (
+              <Typography key={index} variant="caption" sx={{ display: 'block', fontFamily: 'monospace' }}>
+                [{msg.timestamp}] {msg.type}: {msg.text}
+              </Typography>
+            ))}
+          </Box>
+        )}
+      </Box>
+              <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-start", alignItems: "center", padding: 1 }}>
           <Typography
           variant="body2"
           color={isConnected ? "success.main" : "error.main"}
@@ -176,21 +191,6 @@ function MUIDashboard() {
             )}
           </div>
         </Box>
-        
-        {/* Display Additional Information */}
-        {messages.length > 0 && (
-          <Box sx={{ mt: 2, p: 2, bgcolor: 'grey.100', borderRadius: 1, maxHeight: 200, overflow: 'auto' }}>
-            <Typography variant="subtitle2" gutterBottom>
-              Recent Data (Last 20):
-            </Typography>
-            {messages.slice(-20).map((msg, index) => (
-              <Typography key={index} variant="caption" sx={{ display: 'block', fontFamily: 'monospace' }}>
-                [{msg.timestamp}] {msg.type}: {msg.text}
-              </Typography>
-            ))}
-          </Box>
-        )}
-      </Box>
     </div>
   );
 }
