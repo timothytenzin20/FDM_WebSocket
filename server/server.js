@@ -26,13 +26,26 @@ if (!fs.existsSync(dataFilePath)) {
     fs.writeFileSync(dataFilePath, JSON.stringify({}), 'utf8');
 }
 
-// Function to update the JSON file
+// Function to update the local data.JSON file
 function updateData(newData) {
     const currentData = JSON.parse(fs.readFileSync(dataFilePath, 'utf8'));
     const updatedData = { ...currentData, ...newData };
 
     fs.writeFileSync(dataFilePath, JSON.stringify(updatedData, null, 2), 'utf8');
     return updatedData;
+}
+
+// Function to generate sample data for testing
+function generateData(){
+    const newSensorData = {
+        bedTemp: Math.random() * 100,
+        nozzleTemp: Math.random() * 100,
+        printSpeed: Math.random() * 100,
+        lineWidth: Math.random() * 100,
+        nozzleDiameter: Math.random() * 10,
+        predictedLineWidth: 12
+    };
+    return newSensorData
 }
 
 // Express routes
@@ -48,7 +61,7 @@ if (fs.existsSync(indexPath)) {
   console.error("Error: index.html not found at", indexPath);
 }
 
-// API routes (you might want these)
+// API routes (we might need these in the future)
 // app.get('/testing', (req, res) => {
 //   res.send('Hello from Express!');
 // });
@@ -91,18 +104,12 @@ wss.on('connection', (ws, req) => {
     
     ws.on('message', message => {
         console.log(`Client ${ws.id} sent: ${message}`);
-        
-        // Mock update values
-        const newSensorData = {
-            bedTemp: Math.random() * 100,
-            nozzleTemp: Math.random() * 100,
-            printSpeed: Math.random() * 100,
-            lineWidth: Math.random() * 100,
-            nozzleDiameter: Math.random() * 100
-        };
-
+        const newSensorData = generateData();
         const updatedData = updateData(newSensorData); // update JSON file
-        wss.broadcast(JSON.stringify(updatedData));     // broadcast to all clients
+
+        Object.entries(newSensorData).forEach(([key, value]) => {
+        wss.broadcast(`${key}:${value}`);
+        });
     });
 
     ws.on('close', () => {
