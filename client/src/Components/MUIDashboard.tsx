@@ -58,16 +58,16 @@ function MUIDashboard() {
     }
 
     // Use for Raspberry Pi deployment
-    // const ws = new WebSocket(
-    //   `ws://10.16.4.168:3000?token=${wsToken}`,
-    //   wsProtocol
-    // );
-
-    // Use for local development
     const ws = new WebSocket(
-      `ws://localhost:3000?token=${wsToken}`,
+      `ws://10.16.4.168:3000?token=${wsToken}`,
       wsProtocol
     );
+
+    // Use for local development
+    // const ws = new WebSocket(
+    //   `ws://localhost:3000?token=${wsToken}`,
+    //   wsProtocol
+    // );
 
     ws.onopen = () => {
       console.log("Connected to WebSocket server");
@@ -125,7 +125,7 @@ function MUIDashboard() {
         <Typography variant="h4" gutterBottom align="center"/>
         <Dashboard data={messages} />
         
-        {/* Uncomment to simulate data being received */}
+        {/* Uncomment to simulate data being received (CHECK DOCUMENTATION) */}
         <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
           <TextField
             fullWidth

@@ -48,7 +48,7 @@ function generateData(){
     return newSensorData
 }
 
-// Express routes
+    // Express routes
 // Catch-all to serve React for any unknown routes (for React Router)
 const indexPath = path.join(__dirname, '../client/build/index.html');
 console.log(indexPath);
@@ -84,7 +84,6 @@ wss.on('connection', (ws, req) => {
     clients.set(ws.id, ws);
     const parameters = url.parse(req.url, true).query;
     const token = parameters.token;
-
     const protocol = ws.protocol; // inputted protocol
     
     if (protocol !== 'secure-guelph-user' && protocol !== 'testing') {
@@ -123,6 +122,7 @@ server.listen(PORT, function (err) {
     console.log("Server listening on PORT", PORT);
 });
 
+// Send data to clients from server
 wss.broadcast = function broadcast(data) {
     console.log(`Broadcasting: ${data}`);
     wss.clients.forEach(client => {
