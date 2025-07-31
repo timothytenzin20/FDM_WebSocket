@@ -81,8 +81,8 @@ const DataDisplay: React.FC<DataDisplayProps> = ({ data }) => {
     return "#10b981";
   };
 
-  const lineScale = 2.2;
-  const nozzleScale = 2.2;
+  const lineScale = 4.1;
+  const nozzleScale = 4.1;
 
   const lineWidthPx = Math.max(
     (printerData.lineWidth != null ? printerData.lineWidth * lineScale : 10)
