@@ -68,7 +68,7 @@
 
 > **Female-to-Female jumper wires used**
 
-![Arduino Wiring](/arduino_wiring.jpg)
+![Arduino Wiring](./arduino_wiring.jpg)
 
 ---
 
@@ -76,7 +76,7 @@
 
 > **Female-to-Female jumper wires used**
 
-![Raspberry Pi Wiring](/raspberry_pi_wiring.jpg)
+![Raspberry Pi Wiring](./raspberry_pi_wiring.jpg)
 
 ---
 
