@@ -48,7 +48,7 @@ function generateData(){
     return newSensorData
 }
 
-    // Express routes
+// Express routes
 // Catch-all to serve React for any unknown routes (for React Router)
 const indexPath = path.join(__dirname, '../client/build/index.html');
 console.log(indexPath);
