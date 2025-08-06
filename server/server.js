@@ -19,20 +19,61 @@ const path = require('path');
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, '../client/build')));
 
-const dataFilePath = path.join(__dirname, 'data.json');
+// Download allData.json file
+app.get('/download-data', (req, res) => {
+  const filePath = path.join(__dirname, 'allData.json');
+  res.download(filePath, 'allData.json', (err) => {
+    if (err) {
+      console.error("Download error:", err);
+      res.status(500).send("Could not download the file.");
+    }
+  });
+});
 
-// Ensure data.json exists at startup, else create file
+const dataFilePath = path.join(__dirname, 'allData.json');
+
+// Ensure allData.json exists at startup
 if (!fs.existsSync(dataFilePath)) {
     fs.writeFileSync(dataFilePath, JSON.stringify({}), 'utf8');
 }
+// If allData.json exists delete previous data
+else {
+    fs.writeFile(dataFilePath, '', (err) => {
+        if (err) {
+            console.error('Error clearing file contents:', err);
+        } else {
+            console.log('File contents cleared successfully.');
+        }
+    });
+}
 
-// Function to update the local data.JSON file
+// Function to update the local allData.JSON file
 function updateData(newData) {
-    const currentData = JSON.parse(fs.readFileSync(dataFilePath, 'utf8'));
-    const updatedData = { ...currentData, ...newData };
+    let dataArray = [];
 
-    fs.writeFileSync(dataFilePath, JSON.stringify(updatedData, null, 2), 'utf8');
-    return updatedData;
+    // Try to read existing data
+    try {
+        const fileData = fs.readFileSync(dataFilePath, 'utf8');
+        dataArray = JSON.parse(fileData);
+
+        // Ensure it's an array
+        if (!Array.isArray(dataArray)) {
+            throw new Error('Data file is not an array');
+        }
+    } 
+    catch (err) 
+    {
+        // If file doesn't exist or is empty, start fresh
+        console.warn('Could not read existing data or data is invalid. Initializing new array.');
+    }
+
+    // Add the new entry
+    dataArray.push(newData);
+
+    // Write the updated array back to the file
+    fs.writeFileSync(dataFilePath, JSON.stringify(dataArray, null, 2), 'utf8');
+
+    return newData;
 }
 
 // Function to generate sample data for testing
@@ -61,23 +102,6 @@ if (fs.existsSync(indexPath)) {
   console.error("Error: index.html not found at", indexPath);
 }
 
-// API routes (we might need these in the future)
-// app.get('/testing', (req, res) => {
-//   res.send('Hello from Express!');
-// });
-
-// app.get('/api/data', (req, res) => {
-//   const dataPath = path.join(__dirname, 'data.json');
-//   fs.readFile(dataPath, 'utf8', (err, data) => {
-//     if (err) return res.status(500).send('Error reading data');
-//     res.json(JSON.parse(data));
-//   });
-// });
-
-// app.get('/api/test', (req, res) => {
-//   res.json({ test: 'it works' });
-// });
-
 // WebSocket connection handling
 wss.on('connection', (ws, req) => {
     ws.id = clientCounter++;
@@ -101,14 +125,23 @@ wss.on('connection', (ws, req) => {
 
     console.log(`Client ${ws.id} connected with subprotocol: ${protocol}`);
     
+    // Websocket message handling
     ws.on('message', message => {
-        // Data being sent from Raspberry Pi or SIMULATED RESULTS
+        // Data being sent from Raspberry Pi or random string to initiate simulated results
         console.log(`Client ${ws.id} sent: ${message}`);
 
-        // Use to simulate data being received (CHECK DOCUMENTATION Cloning Dashboard Guide: Step 6) 
+        // RASPBERRY PI CONNECTED: Use lines 134 - 139 (CHECK DOCUMENTATION Cloning Dashboard Guide: Step 6) 
+        // const newSensorData = message
+        // newSensorData.additioanlDetails = Date().toLocaleString().toString()
+        // updateData(newSensorData); // update JSON file
+        // Object.entries(newSensorData).forEach(([key, value]) => {
+        //     wss.broadcast(`${key}:${value}`);
+        // });
+
+        // RASBPBERRY PI NOT CONNECTED: Use line 142 to simulate data generation (CHECK DOCUMENTATION Cloning Dashboard Guide: Step 6) 
         // const newSensorData = generateData();
 
-        // UTIL CODE: if rasberry pi not correctly transmitting to websocket, use this code block to directly read data from .JSON file
+        // RASBPBERRY PI NOT CONNECTED: Use lines 145 - 163 to simulate data reading (CHECK DOCUMENTATION Cloning Dashboard Guide: Step 6) 
         if (fs.existsSync("transmitData.json")) {
             fs.readFile('transmitData.json', 'utf8', (err, data) => {
                 if (err) {
@@ -116,7 +149,8 @@ wss.on('connection', (ws, req) => {
                     return;
                 }
                 try {
-                    const newSensorData = JSON.parse(data);
+                    const newSensorData = JSON.parse(data)
+                    newSensorData.additionalDetails = message.toLocaleString()
                     updateData(newSensorData); // update JSON file
 
                     Object.entries(newSensorData).forEach(([key, value]) => {
@@ -128,13 +162,6 @@ wss.on('connection', (ws, req) => {
             });
         }
 
-        // Use if Raspberry Pi data being received (CHECK DOCUMENTATION Cloning Dashboard Guide: Step 6) 
-        // const newSensorData = JSON.parse(message);
-        // updateData(newSensorData); // update JSON file
-
-        Object.entries(newSensorData).forEach(([key, value]) => {
-            wss.broadcast(`${key}:${value}`);
-        });
     });
 
     ws.on('close', () => {

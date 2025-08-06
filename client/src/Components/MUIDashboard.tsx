@@ -7,7 +7,6 @@ import {
   TextField,
   Typography,
   CssBaseline,
-  Paper,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 
@@ -39,7 +38,7 @@ function MUIDashboard() {
         type: "sent",
         timestamp: new Date().toLocaleTimeString(),
       };
-      socket.send(message);
+      socket.send(Date().toString());
       setMessages((prev) => [...prev, sentMsg]);
       setMessage("");
     }
@@ -59,10 +58,11 @@ function MUIDashboard() {
 
     const ws = new WebSocket(
       // Use for Raspberry Pi deployment
-      `ws://10.16.4.168:3000?token=${wsToken}`,
+      // `ws://10.16.4.168:3000?token=${wsToken}`,  
       // Use for local development
-      // `ws://localhost:3000?token=${wsToken}`,
-      // wsProtocol
+      `ws://localhost:3000?token=${wsToken}`, 
+      // Never comment line below out
+      wsProtocol
     );
 
     ws.onopen = () => {
@@ -71,7 +71,7 @@ function MUIDashboard() {
       setIsDisconnected(false);
       
       // Request current data when connected
-      ws.send('request_stored_data');
+      ws.send('initial_data_request');
     };
 
     ws.onmessage = (event) => {
@@ -81,7 +81,7 @@ function MUIDashboard() {
         timestamp: new Date().toLocaleTimeString(),
       };
       
-      setMessages((prev) => [...prev.slice(-50), receivedMsg]); // Keep last 50 messages
+      setMessages((prev) => [...prev.slice(-20), receivedMsg]); // Keep last 20 messages
       // console.log("Received message:", event.data);  // Check if data is received from server
     };
     
@@ -186,6 +186,15 @@ function MUIDashboard() {
               </Button>
             )}
           </div>
+          <Button
+            variant="outlined"
+            color="primary"
+            component="a"
+            href="/download-data"
+            download
+          >
+            Download Data
+          </Button>
         </Box>
     </div>
   );
