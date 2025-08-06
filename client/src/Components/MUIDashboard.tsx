@@ -59,10 +59,10 @@ function MUIDashboard() {
 
     const ws = new WebSocket(
       // Use for Raspberry Pi deployment
-      // `ws://10.16.4.168:3000?token=${wsToken}`,
+      `ws://10.16.4.168:3000?token=${wsToken}`,
       // Use for local development
-      `ws://localhost:3000?token=${wsToken}`,
-      wsProtocol
+      // `ws://localhost:3000?token=${wsToken}`,
+      // wsProtocol
     );
 
     ws.onopen = () => {
@@ -121,7 +121,7 @@ function MUIDashboard() {
         <Typography variant="h4" gutterBottom align="center"/>
         <Dashboard data={messages} />
         
-        {/* Uncomment to simulate data being received (CHECK DOCUMENTATION) */}
+        {/* Uncomment to simulate data being received (CHECK DOCUMENTATION Cloning Dashboard Guide: Step 6) */}
         <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
           <TextField
             fullWidth
