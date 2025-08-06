@@ -67,16 +67,16 @@
 ### Arduino Wiring
 
 > **Female-to-Female jumper wires used**
-[Arduino Wiring]
-<img src="arduino_wiring.jpg" alt="drawing" width="50%"/>
+> [Arduino Wiring]
+> <img src="arduino_wiring.jpg" alt="drawing" width="50%"/>
 
 ---
 
 ### Raspberry Pi Wiring
 
 > **Female-to-Female jumper wires used**
-[Raspberry Pi Wiring]
-<img src="raspberry_pi_wiring.jpg" alt="drawing" width="50%"/>
+> [Raspberry Pi Wiring]
+> <img src="raspberry_pi_wiring.jpg" alt="drawing" width="50%"/>
 
 ---
 
@@ -140,7 +140,7 @@ using System.Collections.Generic;
 
 #### `updateData(newData)`
 
-- Stores most recent data in `data.json`.
+- Stores all recent data in `allData.json`.
 
 #### `generateData()`
 

@@ -28,7 +28,7 @@ server/.env
 server/venv/
 
 # Server data
-server/data.json
+server/allData.json
 server/transmitData.json
 
 # React app dependencies
