@@ -29,6 +29,7 @@ server/venv/
 
 # Server data
 server/data.json
+server/transmitData.json
 
 # React app dependencies
 client/node_modules/
