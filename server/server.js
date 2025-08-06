@@ -102,12 +102,38 @@ wss.on('connection', (ws, req) => {
     console.log(`Client ${ws.id} connected with subprotocol: ${protocol}`);
     
     ws.on('message', message => {
+        // Data being sent from Raspberry Pi or SIMULATED RESULTS
         console.log(`Client ${ws.id} sent: ${message}`);
-        const newSensorData = generateData();
-        const updatedData = updateData(newSensorData); // update JSON file
+
+        // Use to simulate data being received (CHECK DOCUMENTATION Cloning Dashboard Guide: Step 6) 
+        // const newSensorData = generateData();
+
+        // UTIL CODE: if rasberry pi not correctly transmitting to websocket, use this code block to directly read data from .JSON file
+        if (fs.existsSync("transmitData.json")) {
+            fs.readFile('transmitData.json', 'utf8', (err, data) => {
+                if (err) {
+                    console.error('Error reading file:', err);
+                    return;
+                }
+                try {
+                    const newSensorData = JSON.parse(data);
+                    updateData(newSensorData); // update JSON file
+
+                    Object.entries(newSensorData).forEach(([key, value]) => {
+                        wss.broadcast(`${key}:${value}`);
+                    });
+                } catch (error) {
+                    console.error('Error parsing JSON:', error);
+                }
+            });
+        }
+
+        // Use if Raspberry Pi data being received (CHECK DOCUMENTATION Cloning Dashboard Guide: Step 6) 
+        // const newSensorData = JSON.parse(message);
+        // updateData(newSensorData); // update JSON file
 
         Object.entries(newSensorData).forEach(([key, value]) => {
-        wss.broadcast(`${key}:${value}`);
+            wss.broadcast(`${key}:${value}`);
         });
     });
 
