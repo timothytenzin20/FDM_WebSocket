@@ -40,7 +40,7 @@ def transmitData():
         print("Sending JSON data...")
         ws.send(content)
     except FileNotFoundError:
-        print("Error: data.json not found.")
+        print("Error: transmitData.json not found.")
     finally:
         closeConnection(ws)
 
