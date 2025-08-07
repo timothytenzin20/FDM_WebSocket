@@ -17,7 +17,10 @@ const fs = require('fs');
 const path = require('path');
 
 // Serve static files from the React app
+// Use for local development
 app.use(express.static(path.join(__dirname, '../client/build')));
+// Use for Raspberry Pi deployment
+// app.use(express.static(path.join(__dirname, './build')));
 
 // Download allData.json file
 app.get('/download-data', (req, res) => {
@@ -91,7 +94,11 @@ function generateData(){
 
 // Express routes
 // Catch-all to serve React for any unknown routes (for React Router)
+// Use for local development
 const indexPath = path.join(__dirname, '../client/build/index.html');
+// Use for Raspberry Pi development
+// const indexPath = path.join(__dirname, './build/index.html');
+
 console.log(indexPath);
 
 if (fs.existsSync(indexPath)) {
