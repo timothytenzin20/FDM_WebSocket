@@ -137,18 +137,9 @@ wss.on('connection', (ws, req) => {
         // Data being sent from Raspberry Pi or random string to initiate simulated results
         console.log(`Client ${ws.id} sent: ${message}`);
 
-        // RASPBERRY PI CONNECTED: Use lines 134 - 139 (CHECK DOCUMENTATION Cloning Dashboard Guide: Step 6) 
-        // const newSensorData = message
-        // newSensorData.additionalDetails = Date().toLocaleString().toString()
-        // updateData(newSensorData); // update JSON file
-        // Object.entries(newSensorData).forEach(([key, value]) => {
-        //     wss.broadcast(`${key}:${value}`);
-        // });
-
-        // RASBPBERRY PI NOT CONNECTED: Use line 142 to simulate data generation (CHECK DOCUMENTATION Cloning Dashboard Guide: Step 6) 
+        // RASBPBERRY PI NOT CONNECTED: Use line 149 to simulate data generation (CHECK DOCUMENTATION Cloning Dashboard Guide: Step 6) 
         // const newSensorData = generateData();
 
-        // RASBPBERRY PI NOT CONNECTED: Use lines 145 - 163 to simulate data reading (CHECK DOCUMENTATION Cloning Dashboard Guide: Step 6) 
         if (fs.existsSync("transmitData.json")) {
             fs.readFile('transmitData.json', 'utf8', (err, data) => {
                 if (err) {
