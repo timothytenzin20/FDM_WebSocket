@@ -132,7 +132,7 @@ wss.on('connection', (ws, req) => {
 
         // RASPBERRY PI CONNECTED: Use lines 134 - 139 (CHECK DOCUMENTATION Cloning Dashboard Guide: Step 6) 
         // const newSensorData = message
-        // newSensorData.additioanlDetails = Date().toLocaleString().toString()
+        // newSensorData.additionalDetails = Date().toLocaleString().toString()
         // updateData(newSensorData); // update JSON file
         // Object.entries(newSensorData).forEach(([key, value]) => {
         //     wss.broadcast(`${key}:${value}`);
@@ -150,7 +150,8 @@ wss.on('connection', (ws, req) => {
                 }
                 try {
                     const newSensorData = JSON.parse(data)
-                    newSensorData.additionalDetails = message.toLocaleString()
+                    newSensorData.timestamp = Date().toLocaleString().toString()
+                    newSensorData.clientMessage = message.toLocaleString()
                     updateData(newSensorData); // update JSON file
 
                     Object.entries(newSensorData).forEach(([key, value]) => {
