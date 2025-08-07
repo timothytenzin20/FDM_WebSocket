@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import Dashboard from "./DataDisplay";
 
+// increment by 1, start at 245 nozzle, bed start at 70
+
 import {
   Box,
   Button,
@@ -18,7 +20,6 @@ function MUIDashboard() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<{ text: string; type: string; timestamp: string }[]>([]);
   const [isConnected, setIsConnected] = useState(false);
-  const [isDisconnected, setIsDisconnected] = useState(true);
 
   // Establish WebSocket connection on load
   useEffect(() => {
@@ -38,7 +39,7 @@ function MUIDashboard() {
         type: "sent",
         timestamp: new Date().toLocaleTimeString(),
       };
-      socket.send(Date().toString());
+      socket.send(message);
       setMessages((prev) => [...prev, sentMsg]);
       setMessage("");
     }
@@ -68,7 +69,6 @@ function MUIDashboard() {
     ws.onopen = () => {
       console.log("Connected to WebSocket server");
       setIsConnected(true);
-      setIsDisconnected(false);
       
       // Request current data when connected
       ws.send('initial_data_request');
@@ -88,7 +88,6 @@ function MUIDashboard() {
     ws.onclose = () => {
       console.log("Disconnected from WebSocket server");
       setIsConnected(false);
-      setIsDisconnected(true);
     };
 
     ws.onerror = (error) => {
@@ -122,7 +121,7 @@ function MUIDashboard() {
         <Dashboard data={messages} />
         
         {/* Uncomment to simulate data being received (CHECK DOCUMENTATION Cloning Dashboard Guide: Step 6) */}
-        <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
+        {/* <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
           <TextField
             fullWidth
             variant="outlined"
@@ -141,7 +140,7 @@ function MUIDashboard() {
           >
             Send
           </Button>
-        </Box>
+        </Box> */}
         
         {/* Display Additional Information */}
         {messages.length > 0 && (
@@ -157,45 +156,50 @@ function MUIDashboard() {
           </Box>
         )}
       </Box>
-              <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-start", alignItems: "center", padding: 1 }}>
-          <Typography
+      <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-start", alignItems: "center", padding: 1 }}>
+        <Typography
           variant="body2"
           color={isConnected ? "success.main" : "error.main"}
           align="left"
           >
           Status: {isConnected ? "Connected" : "Disconnected"}
         </Typography>
-          <div>
-            {isConnected ? (
-              <Button
-                variant="contained"
-                color="error"
-                size="small"
-                onClick={handleDisconnect}
-              >
-                Disconnect from WebSocket
-              </Button>
-            ) : (
-              <Button
-                variant="contained"
-                color="success"
-                size="small"
-                onClick={handleReconnect}
-              >
-                Connect to WebSocket
-              </Button>
-            )}
-          </div>
-          <Button
-            variant="outlined"
-            color="primary"
-            component="a"
-            href="/download-data"
-            download
-          >
-            Download Data
-          </Button>
-        </Box>
+        <div>
+          {isConnected ? (
+            <Button
+              variant="contained"
+              color="error"
+              size="small"
+              onClick={handleDisconnect}
+            >
+              Disconnect from WebSocket
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              color="success"
+              size="small"
+              onClick={handleReconnect}
+            >
+              Connect to WebSocket
+            </Button>
+          )}
+        </div>
+        <Button
+          variant="outlined"
+          color="primary"
+          component="a"
+          href="/download-data"
+          download
+        >
+          Download Data
+        </Button>
+      </Box>
+      <Box sx={{ display: "flex", justifyContent: "fkex-start", padding: 1}}>
+        <Typography variant="subtitle2" gutterBottom>
+          WARNING: Data will be lost on server restart, download before closing!  
+        </Typography>
+      </Box>
     </div>
   );
 }
