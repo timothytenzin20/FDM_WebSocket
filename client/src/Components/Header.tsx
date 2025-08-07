@@ -10,11 +10,13 @@ return (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <img
-            src={Logo}
-            alt="Logo"
-            style={{ maxWidth: 120, maxHeight: 120, marginRight: 16 }}
-          />
+          <a href="https://sy1990.github.io/diim-lab/" target="_blank">
+            <img
+              src={Logo}
+              alt="Logo"
+              style={{ maxWidth: 120, maxHeight: 120, marginRight: 16 }}
+            />
+          </a>
           <Typography
             variant="h5"
             noWrap
