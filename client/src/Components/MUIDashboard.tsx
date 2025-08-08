@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import Dashboard from "./DataDisplay";
 
-// increment by 1, start at 245 nozzle, bed start at 70
-
 import {
   Box,
   Button,
-  TextField,
   Typography,
   CssBaseline,
+  TextField,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
+
+let RASPBERRYPICONNECTED = true
 
 function MUIDashboard() {
   const wsToken = process.env.REACT_APP_TOKEN;
@@ -20,7 +20,7 @@ function MUIDashboard() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<{ text: string; type: string; timestamp: string }[]>([]);
   const [isConnected, setIsConnected] = useState(false);
-
+  
   // Establish WebSocket connection on load
   useEffect(() => {
     connect();
@@ -57,12 +57,9 @@ function MUIDashboard() {
       socketRef.current.close();
     }
 
+    let wsPath = RASPBERRYPICONNECTED ? `ws://10.16.4.168:3000?token=${wsToken}` : `ws://localhost:3000?token=${wsToken}`
     const ws = new WebSocket(
-      // Use for Raspberry Pi deployment
-      // `ws://10.16.4.168:3000?token=${wsToken}`,  
-      // Use for local development
-      `ws://localhost:3000?token=${wsToken}`, 
-      // Never comment line below out
+      wsPath,
       wsProtocol
     );
 
@@ -119,9 +116,10 @@ function MUIDashboard() {
         <CssBaseline />
         <Typography variant="h4" gutterBottom align="center"/>
         <Dashboard data={messages} />
-        
+
         {/* Uncomment to simulate data being received (CHECK DOCUMENTATION Cloning Dashboard Guide: Step 6) */}
-        {/* <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
+        {!RASPBERRYPICONNECTED && (
+        <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
           <TextField
             fullWidth
             variant="outlined"
@@ -140,8 +138,8 @@ function MUIDashboard() {
           >
             Send
           </Button>
-        </Box> */}
-        
+        </Box>
+        )}
         {/* Display Additional Information */}
         {messages.length > 0 && (
           <Box sx={{ mt: 2, p: 2, bgcolor: 'grey.100', borderRadius: 1, maxHeight: 200, overflow: 'auto' }}>
