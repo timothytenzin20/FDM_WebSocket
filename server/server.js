@@ -11,16 +11,15 @@ const server = http.createServer(app); // Create the HTTP server for Express
 const wss = new WebSocket.Server({ server }); // Attach WebSocket server to the same HTTP server
 const connectionKey = process.env.CONNECTION_KEY;
 const clients = new Map();
-var clientCounter = 1;
+let clientCounter = 1;
 
 const fs = require('fs');
 const path = require('path');
 
+let RASPBPBERRYPICONNECTED = false
+
 // Serve static files from the React app
-// Use for local development
-app.use(express.static(path.join(__dirname, '../client/build')));
-// Use for Raspberry Pi deployment
-// app.use(express.static(path.join(__dirname, './build')));
+RASPBPBERRYPICONNECTED ? app.use(express.static(path.join(__dirname, './build'))) : app.use(express.static(path.join(__dirname, '../client/build')));
 
 // Download allData.json file
 app.get('/download-data', (req, res) => {
@@ -87,20 +86,15 @@ function generateData(){
         printSpeed: Math.random() * 100,
         lineWidth: Math.random() * 100,
         nozzleDiameter: Math.random() * 10,
-        predictedLineWidth: 12
+        predictedLineWidth: Math.random()
     };
     return newSensorData
 }
 
 // Express routes
 // Catch-all to serve React for any unknown routes (for React Router)
-// Use for local development
-const indexPath = path.join(__dirname, '../client/build/index.html');
-// Use for Raspberry Pi development
-// const indexPath = path.join(__dirname, './build/index.html');
-
-console.log(indexPath);
-
+RASPBPBERRYPICONNECTED ? indexPath = path.join(__dirname, './build/index.html') : indexPath = path.join(__dirname, '../client/build/index.html');
+// console.log(indexPath);  // Confirm correct path depending on Raspberry Pi connection
 if (fs.existsSync(indexPath)) {
   app.use((req, res) => {
     res.sendFile(indexPath);
@@ -136,28 +130,37 @@ wss.on('connection', (ws, req) => {
     ws.on('message', message => {
         // Data being sent from Raspberry Pi or random string to initiate simulated results
         console.log(`Client ${ws.id} sent: ${message}`);
+        // Parse client data if Raspberry Pi connected
+        if (RASPBPBERRYPICONNECTED) {
+            if (fs.existsSync("transmitData.json")) {
+                fs.readFile('transmitData.json', 'utf8', (err, data) => {
+                    if (err) {
+                        console.error('Error reading file:', err);
+                        return;
+                    }
+                    try {
+                        newSensorData = JSON.parse(data)
+                        newSensorData.timestamp = Date().toLocaleString()
+                        newSensorData.clientMessage = message.toLocaleString()
+                        updateData(newSensorData); // update JSON file
 
-        // RASBPBERRY PI NOT CONNECTED: Use line 149 to simulate data generation (CHECK DOCUMENTATION Cloning Dashboard Guide: Step 6) 
-        // const newSensorData = generateData();
+                        Object.entries(newSensorData).forEach(([key, value]) => {
+                            wss.broadcast(`${key}:${value}`);
+                        });
+                    } catch (error) {
+                        console.error('Error parsing JSON:', error);
+                    }
+                });
+            }  
+        }
+        else{
+            newSensorData = generateData();
+            newSensorData.timestamp = Date().toLocaleString()
+            newSensorData.clientMessage = message.toLocaleString()
+            updateData(newSensorData); // update JSON file
 
-        if (fs.existsSync("transmitData.json")) {
-            fs.readFile('transmitData.json', 'utf8', (err, data) => {
-                if (err) {
-                    console.error('Error reading file:', err);
-                    return;
-                }
-                try {
-                    const newSensorData = JSON.parse(data)
-                    newSensorData.timestamp = Date().toLocaleString().toString()
-                    newSensorData.clientMessage = message.toLocaleString()
-                    updateData(newSensorData); // update JSON file
-
-                    Object.entries(newSensorData).forEach(([key, value]) => {
-                        wss.broadcast(`${key}:${value}`);
-                    });
-                } catch (error) {
-                    console.error('Error parsing JSON:', error);
-                }
+            Object.entries(newSensorData).forEach(([key, value]) => {
+                wss.broadcast(`${key}:${value}`);
             });
         }
 
