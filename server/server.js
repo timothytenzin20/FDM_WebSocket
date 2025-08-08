@@ -86,7 +86,7 @@ function generateData(){
         printSpeed: Math.random() * 100,
         lineWidth: Math.random() * 100,
         nozzleDiameter: Math.random() * 10,
-        predictedLineWidth: Math.random()
+        predictedLineWidth: Math.random() * 100
     };
     return newSensorData
 }
