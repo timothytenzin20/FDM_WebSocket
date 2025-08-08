@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./DataDisplay.css";
-import { Box, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { Gauge } from '@mui/x-charts/Gauge';
+import LineGraph from "./LineGraph"
 
 type DataDisplayProps = {
   data: {
@@ -149,9 +150,10 @@ const DataDisplay: React.FC<DataDisplayProps> = ({ data }) => {
                     </Typography>
                   </div>
                 </div>
+                <LineGraph messages={data}></LineGraph>
                 <h2 className="topbar-title">Image Processing Results</h2>
                 <div className="flex flex-container">
-                  <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start' }}>
                     <div>
                       <p>Predicted Line Width: {printerData.predictedLineWidth?.toFixed(3) ?? "--"} mm</p>
                       <div
