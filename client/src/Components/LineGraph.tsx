@@ -24,7 +24,8 @@ type LineGraphProps = {
 };
 
 const parseTimestamp = (ts: string): Date | null => {
-  const timeRegex = /^(\d{1,2}):(\d{2}):(\d{2})\s?(AM|PM)$/i;
+  // Accept AM/PM in various formats: AM, PM, am, pm, a.m., p.m., etc.
+  const timeRegex = /^(\d{1,2}):(\d{2}):(\d{2})\s?(AM|PM|A\.M\.|P\.M\.|a\.m\.|p\.m\.|am|pm)$/i;
   const match = ts.match(timeRegex);
   if (!match) return null;
 
@@ -33,8 +34,11 @@ const parseTimestamp = (ts: string): Date | null => {
   const minute = parseInt(minStr, 10);
   const second = parseInt(secStr, 10);
 
-  if (meridian.toUpperCase() === "PM" && hour < 12) hour += 12;
-  if (meridian.toUpperCase() === "AM" && hour === 12) hour = 0;
+  // Normalize meridian to uppercase without periods
+  meridian = meridian.replace(/\./g, "").toUpperCase();
+
+  if (meridian === "PM" && hour < 12) hour += 12;
+  if (meridian === "AM" && hour === 12) hour = 0;
 
   return new Date(1970, 0, 1, hour, minute, second);
 };
