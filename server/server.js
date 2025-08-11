@@ -16,7 +16,7 @@ let clientCounter = 1;
 const fs = require('fs');
 const path = require('path');
 
-let RASPBPBERRYPICONNECTED = false
+let RASPBPBERRYPICONNECTED = true
 
 // Serve static files from the React app
 RASPBPBERRYPICONNECTED ? app.use(express.static(path.join(__dirname, './build'))) : app.use(express.static(path.join(__dirname, '../client/build')));
