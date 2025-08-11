@@ -104,6 +104,7 @@ const DataDisplay: React.FC<DataDisplayProps> = ({ data }) => {
               <div>
                 <h2 className="topbar-title">Printer Status Overview</h2>
                 <div className="flex">
+                  {/* ...existing gauge cards... */}
                   <div className={`tooltip flex-container ${printerData.bedTemp !== null ? getTempColor(printerData.bedTemp, "bed") : "card"}`}>
                     <p>Bed Temperature:</p>
                     <span className="tooltiptext"> Red Gauge: Greater than 75°C <br/> Green Gauge: Less than 75°C</span>
@@ -151,40 +152,36 @@ const DataDisplay: React.FC<DataDisplayProps> = ({ data }) => {
                   </div>
                 </div>
                 <LineGraph messages={data}></LineGraph>
-                <h2 className="topbar-title">Image Processing Results</h2>
-                <div className="flex flex-container">
-                  <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start' }}>
-                    <div>
+                <h2 className="topbar-title flex">Image Processing Results</h2>
+                <div className="image-processing-results">
+                  <div className="image-bars">
+                    <div className="image-bar">
                       <p>Predicted Line Width: {printerData.predictedLineWidth?.toFixed(3) ?? "--"} mm</p>
                       <div
+                        className="bar predicted-bar"
                         style={{
-                          height: '50px',
                           width: `${printerData.predictedLineWidth !== null ? printerData.predictedLineWidth * lineScale : lineWidthPx}px`,
-                          backgroundColor: `#10b981`,
-                          borderRadius: '4px',
                         }}
                       />
                     </div>
-                    <div>
+                    <div className="image-bar">
                       <p>Line Width: {printerData.lineWidth?.toFixed(3) ?? "--"} mm</p>
                       <div
+                        className="bar"
                         style={{
-                          height: '50px',
                           width: `${lineWidthPx}px`,
                           backgroundColor: `${getLineWidthColor(printerData.lineWidth != null ? printerData.lineWidth : 0)}`,
-                          borderRadius: '4px',
                         }}
                       />
                     </div>
-                    <div>
+                    <div className="image-bar">
                       <p>Nozzle Diameter: {printerData.nozzleDiameter?.toFixed(3) ?? "--"} mm</p>
                       <div
+                        className="circle"
                         style={{
                           width: `${nozzleDiameterPx}px`,
                           height: `${nozzleDiameterPx}px`,
                           backgroundColor: `${getNozzleDiameterColor(printerData.nozzleDiameter != null ? printerData.nozzleDiameter : 0)}`,
-                          borderRadius: '50%',
-                          border: '1px solid',
                         }}
                       />
                     </div>
