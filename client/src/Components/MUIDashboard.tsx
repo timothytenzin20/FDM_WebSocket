@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 
-let RASPBERRYPICONNECTED = false
+let RASPBERRYPICONNECTED = true
 
 function MUIDashboard() {
   const wsToken = process.env.REACT_APP_TOKEN;
