@@ -104,7 +104,6 @@ const DataDisplay: React.FC<DataDisplayProps> = ({ data }) => {
               <div>
                 <h2 className="topbar-title">Printer Status Overview</h2>
                 <div className="flex">
-                  {/* ...existing gauge cards... */}
                   <div className={`tooltip flex-container ${printerData.bedTemp !== null ? getTempColor(printerData.bedTemp, "bed") : "card"}`}>
                     <p>Bed Temperature:</p>
                     <span className="tooltiptext"> Red Gauge: Greater than 75°C <br/> Green Gauge: Less than 75°C</span>
